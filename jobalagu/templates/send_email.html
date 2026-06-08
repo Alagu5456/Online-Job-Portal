@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Send Email to Job Seeker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Send Email to Job Seeker</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="recipient" class="form-label">Recipient Email</label>
+            <input type="email" class="form-control" id="recipient" name="recipient" required>
+        </div>
+        <div class="mb-3">
+            <label for="subject" class="form-label">Subject</label>
+            <input type="text" class="form-control" id="subject" name="subject" required>
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">Message</label>
+            <textarea class="form-control" id="body" name="body" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Email</button>
+    </form>
+</div>
+{% endblock %}

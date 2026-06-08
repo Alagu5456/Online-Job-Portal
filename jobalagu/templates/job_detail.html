@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.title }} at {{ job.company }} - JobPortal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Job Header -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1 class="card-title">{{ job.title }}</h1>
+                    <h4 class="text-muted mb-3">
+                        <i class="fas fa-building me-2"></i>{{ job.company }}
+                    </h4>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                <strong>Location:</strong> {{ job.location }}
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-briefcase me-2 text-primary"></i>
+                                <strong>Type:</strong> <span class="badge bg-primary">{{ job.job_type }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if job.salary_range %}
+                                <p class="mb-2">
+                                    <i class="fas fa-dollar-sign me-2 text-success"></i>
+                                    <strong>Salary:</strong> {{ job.salary_range }}
+                                </p>
+                            {% endif %}
+                            <p class="mb-2">
+                                <i class="fas fa-clock me-2 text-info"></i>
+                                <strong>Posted:</strong> {{ job.posted_at.strftime('%B %d, %Y') }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if job.application_deadline %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Application Deadline:</strong> {{ job.application_deadline.strftime('%B %d, %Y') }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-4 text-md-end">
+                    {% if current_user.is_authenticated and not current_user.is_admin %}
+                        {% if has_applied %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Application Status:</strong>
+                                {% if user_application.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% elif user_application.status == 'reviewed' %}
+                                    <span class="badge bg-info">Reviewed</span>
+                                {% elif user_application.status == 'accepted' %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif user_application.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                                <br>
+                                <small>Applied on {{ user_application.applied_at.strftime('%B %d, %Y') }}</small>
+                            </div>
+                        {% else %}
+                            {% if applying %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Complete the form below to apply for this position.
+                                </div>
+                            {% else %}
+                                <a href="#apply-section" class="btn btn-primary btn-lg mb-3">
+                                    <i class="fas fa-paper-plane me-2"></i>Apply Now
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% elif not current_user.is_authenticated %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <a href="{{ url_for('login') }}" class="alert-link">Sign in</a> to apply for this job
+                        </div>
+                    {% endif %}
+                    
+                    <div class="text-muted">
+                        <i class="fas fa-users me-1"></i>
+                        {{ job.application_count }} applicant{{ 's' if job.application_count != 1 else '' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Job Details -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Job Description -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-file-text me-2"></i>Job Description</h5>
+                </div>
+                <div class="card-body">
+                    <div class="job-description">
+                        {{ job.description|replace('\n', '<br>')|safe }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Requirements -->
+            {% if job.requirements %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Requirements</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="job-requirements">
+                            {{ job.requirements|replace('\n', '<br>')|safe }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Application Form -->
+            {% if current_user.is_authenticated and not current_user.is_admin and not has_applied %}
+                <div class="card" id="apply-section">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Apply for this Job</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if applying %}
+                            <form method="POST" enctype="multipart/form-data" novalidate>
+                                {{ form.hidden_tag() }}
+                                
+                                <div class="mb-3">
+                                    {{ form.cover_letter.label(class="form-label") }}
+                                    {{ form.cover_letter(class="form-control", rows="6", 
+                                        placeholder="Write a brief cover letter explaining why you're interested in this position...") }}
+                                    {% if form.cover_letter.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.cover_letter.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.resume.label(class="form-label") }}
+                                    {{ form.resume(class="form-control" + (" is-invalid" if form.resume.errors else "")) }}
+                                    <div class="form-text">Please upload your resume in PDF format (max 16MB).</div>
+                                    {% if form.resume.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.resume.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Application
+                                    </button>
+                                    <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        {% else %}
+                            <p>Ready to apply for this position?</p>
+                            <a href="{{ url_for('apply_job', job_id=job.id) }}" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Start Application
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Company Info -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-building me-2"></i>About {{ job.company }}</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Company information not available.</p>
+                </div>
+            </div>
+            
+            <!-- Similar Jobs -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-briefcase me-2"></i>Similar Jobs</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        <a href="{{ url_for('jobs', search_term=job.title.split()[0]) }}" class="text-decoration-none">
+                            View more {{ job.title.split()[0] }} jobs
+                        </a>
+                    </p>
+                    <p class="text-muted">
+                        <a href="{{ url_for('jobs', location=job.location) }}" class="text-decoration-none">
+                            View more jobs in {{ job.location }}
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

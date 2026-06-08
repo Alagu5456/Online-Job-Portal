@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - JobPortal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+        <div class="text-muted">Welcome back, {{ current_user.full_name }}!</div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt mb-2" style="font-size: 2rem;"></i>
+                    <h3>{{ total_applications }}</h3>
+                    <p class="mb-0">Total Applications</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock mb-2" style="font-size: 2rem;"></i>
+                    <h3>{{ pending_applications }}</h3>
+                    <p class="mb-0">Pending</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle mb-2" style="font-size: 2rem;"></i>
+                    <h3>{{ accepted_applications }}</h3>
+                    <p class="mb-0">Accepted</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-briefcase mb-2" style="font-size: 2rem;"></i>
+                    <h3><a href="{{ url_for('jobs') }}" class="text-white text-decoration-none">Browse</a></h3>
+                    <p class="mb-0">New Jobs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('jobs') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-search me-2"></i>Browse Jobs
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('my_applications') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-file-alt me-2"></i>My Applications
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                <i class="fas fa-user me-2"></i>Update Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Applications -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Applications</h5>
+                    <a href="{{ url_for('my_applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_applications %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Job Title</th>
+                                        <th>Company</th>
+                                        <th>Applied Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in recent_applications %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ application.job.title }}</strong>
+                                            </td>
+                                            <td>{{ application.job.company }}</td>
+                                            <td>{{ application.applied_at.strftime('%b %d, %Y') }}</td>
+                                            <td>
+                                                {% if application.status == 'pending' %}
+                                                    <span class="badge bg-warning">Pending</span>
+                                                {% elif application.status == 'reviewed' %}
+                                                    <span class="badge bg-info">Reviewed</span>
+                                                {% elif application.status == 'accepted' %}
+                                                    <span class="badge bg-success">Accepted</span>
+                                                {% elif application.status == 'rejected' %}
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('job_detail', job_id=application.job.id) }}" 
+                                                   class="btn btn-sm btn-outline-primary">View Job</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h5 class="text-muted">No applications yet</h5>
+                            <p class="text-muted">Start applying to jobs to see them here!</p>
+                            <a href="{{ url_for('jobs') }}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Browse Jobs
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

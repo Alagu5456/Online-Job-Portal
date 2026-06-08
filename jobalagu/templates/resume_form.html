@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Resume</title>
+    <style>
+        /* === Resume Form Styling === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .resume-form-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 2rem 2.5rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .resume-form-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .resume-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2f3640;
+        }
+
+        .resume-form input[type="text"],
+        .resume-form input[type="email"],
+        .resume-form input[type="tel"],
+        .resume-form textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ced6e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .resume-form input:focus,
+        .resume-form textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .resume-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .resume-form button {
+            width: 100%;
+            padding: 0.85rem;
+            font-size: 1.1rem;
+            background-color: #2980b9;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .resume-form button:hover {
+            background-color: #2471a3;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        @media (max-width: 600px) {
+            .resume-form-container {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-form-container">
+        <h2>Create Your Resume</h2>
+        <form method="POST" action="/generate_resume" class="resume-form">
+            <div class="form-section">
+                <label for="full_name">Full Name</label>
+                <input type="text" name="full_name" id="full_name" required>
+
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required>
+
+                <label for="phone">Phone</label>
+                <input type="tel" name="phone" id="phone" required>
+
+                <label for="address">Address</label>
+                <input type="text" name="address" id="address">
+            </div>
+
+            <div class="form-section">
+                <label for="objective">Career Objective</label>
+                <textarea name="objective" id="objective"></textarea>
+
+                <label for="skills">Skills</label>
+                <textarea name="skills" id="skills"></textarea>
+
+                <label for="education">Education</label>
+                <textarea name="education" id="education"></textarea>
+
+                <label for="experience">Work Experience</label>
+                <textarea name="experience" id="experience"></textarea>
+
+                <label for="projects">Projects</label>
+                <textarea name="projects" id="projects"></textarea>
+            </div>
+
+            <div class="form-section">
+                <label for="certifications">Certifications</label>
+                <textarea name="certifications" id="certifications"></textarea>
+
+                <label for="languages">Languages</label>
+                <textarea name="languages" id="languages"></textarea>
+
+                <label for="hobbies">Hobbies</label>
+                <textarea name="hobbies" id="hobbies"></textarea>
+
+                <label for="references">References</label>
+                <textarea name="references" id="references"></textarea>
+            </div>
+
+            <button type="submit">Generate Resume</button>
+        </form>
+    </div>
+</body>
+</html>

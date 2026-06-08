@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume | {{ full_name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 24px 0;
+        }
+
+        .download-btn {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .download-btn button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.08rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            transition: background-color 0.2s;
+        }
+        .download-btn button:hover {
+            background-color: #0056b3;
+        }
+
+        .resume-container {
+            background-color: #fff;
+            max-width: 860px;
+            margin: 0 auto;
+            border-radius: 14px;
+            box-shadow: 0 3px 24px rgba(22, 44, 80, 0.13);
+            padding: 42px 44px 36px 44px;
+        }
+
+        .header-info {
+            border-bottom: 2px solid #e0e2e4;
+            padding-bottom: 18px;
+            margin-bottom: 32px;
+        }
+        .resume-name {
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            font-size: 2.3rem;
+            color: #2d3f54;
+            letter-spacing: .02em;
+        }
+        .contact-details {
+            color: #535b6b;
+            font-size: 1.09rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 38px;
+            margin-bottom: 2px;
+        }
+        .contact-details span:not(:last-child):after {
+            content: "|";
+            color: #c3c7cc;
+            margin: 0 10px;
+        }
+
+        .section {
+            margin-bottom: 28px;
+        }
+        .section h2 {
+            font-size: 1.18rem;
+            color: #007bff;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            background: linear-gradient(90deg, #e7effa, #fff 75%);
+            display: inline-block;
+            padding: 3px 16px 3px 0;
+            border-radius: 3px;
+            position: relative;
+            left: -10px;
+        }
+        .section-content {
+            margin-left: 10px;
+            color: #444;
+            font-size: 1.01rem;
+        }
+        .section-content.multi-line {
+            white-space: pre-line;
+        }
+
+        @media print {
+            .download-btn { display: none; }
+            body { background: none; padding: 0; }
+            .resume-container { box-shadow: none !important; border: none; }
+            .section h2 { color: #2d3f54 !important; background: none; }
+        }
+        @media (max-width: 600px) {
+            .resume-container { padding: 13px 7px; }
+            .resume-name { font-size: 1.22rem; }
+            .header-info { padding-bottom: 10px; }
+            .section h2 { font-size: 1rem; left: -2px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="download-btn">
+        <button onclick="window.print()">⬇ Download Resume (PDF)</button>
+    </div>
+    <div class="resume-container">
+        <div class="header-info">
+            <div class="resume-name">{{ full_name }}</div>
+            <div class="contact-details">
+                <span><b>Email:</b> {{ email }}</span>
+                <span><b>Phone:</b> {{ phone }}</span>
+                {% if address %}<span><b>Address:</b> {{ address }}</span>{% endif %}
+            </div>
+        </div>
+
+        {% if objective %}
+        <div class="section">
+            <h2>Career Objective</h2>
+            <div class="section-content multi-line">{{ objective }}</div>
+        </div>
+        {% endif %}
+
+        {% if skills %}
+        <div class="section">
+            <h2>Skills</h2>
+            <div class="section-content multi-line">{{ skills }}</div>
+        </div>
+        {% endif %}
+
+        {% if education %}
+        <div class="section">
+            <h2>Education</h2>
+            <div class="section-content multi-line">{{ education }}</div>
+        </div>
+        {% endif %}
+
+        {% if experience %}
+        <div class="section">
+            <h2>Work Experience</h2>
+            <div class="section-content multi-line">{{ experience }}</div>
+        </div>
+        {% endif %}
+
+        {% if projects %}
+        <div class="section">
+            <h2>Projects</h2>
+            <div class="section-content multi-line">{{ projects }}</div>
+        </div>
+        {% endif %}
+
+        {% if certifications %}
+        <div class="section">
+            <h2>Certifications</h2>
+            <div class="section-content multi-line">{{ certifications }}</div>
+        </div>
+        {% endif %}
+
+        {% if languages %}
+        <div class="section">
+            <h2>Languages</h2>
+            <div class="section-content multi-line">{{ languages }}</div>
+        </div>
+        {% endif %}
+
+        {% if hobbies %}
+        <div class="section">
+            <h2>Hobbies</h2>
+            <div class="section-content multi-line">{{ hobbies }}</div>
+        </div>
+        {% endif %}
+
+        {% if references %}
+        <div class="section">
+            <h2>References</h2>
+            <div class="section-content multi-line">{{ references }}</div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

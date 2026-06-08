@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Jobs - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-briefcase me-2"></i>Manage Jobs</h1>
+        <a href="{{ url_for('post_job') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Post New Job
+        </a>
+    </div>
+    
+    {% if jobs.items %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Location</th>
+                                <th>Type</th>
+                                <th>Applications</th>
+                                <th>Posted Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs.items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ job.title }}</strong>
+                                        {% if job.application_deadline %}
+                                            <br><small class="text-muted">Deadline: {{ job.application_deadline.strftime('%b %d, %Y') }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ job.company }}</td>
+                                    <td>{{ job.location }}</td>
+                                    <td><span class="badge bg-primary">{{ job.job_type }}</span></td>
+                                    <td>
+                                        <a href="{{ url_for('admin_applicants', job_id=job.id) }}" class="text-decoration-none">
+                                            {{ job.application_count }}
+                                        </a>
+                                    </td>
+                                    <td>{{ job.posted_at.strftime('%b %d, %Y') }}</td>
+                                    <td>
+                                        {% if job.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('job_detail', job_id=job.id) }}" 
+                                               class="btn btn-outline-info" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('edit_job', job_id=job.id) }}" 
+                                               class="btn btn-outline-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('toggle_job_status', job_id=job.id) }}" 
+                                               class="btn btn-outline-{{ 'warning' if job.is_active else 'success' }}" 
+                                               title="{{ 'Deactivate' if job.is_active else 'Activate' }}"
+                                               onclick="return confirm('Are you sure you want to {{ 'deactivate' if job.is_active else 'activate' }} this job?')">
+                                                <i class="fas fa-{{ 'pause' if job.is_active else 'play' }}"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin_applicants', job_id=job.id) }}" 
+                                               class="btn btn-outline-secondary" title="View Applications">
+                                                <i class="fas fa-file-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        {% if jobs.pages > 1 %}
+            <nav aria-label="Jobs pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if jobs.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_jobs', page=jobs.prev_num) }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in jobs.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != jobs.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('admin_jobs', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if jobs.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_jobs', page=jobs.next_num) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-briefcase text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted">No jobs posted yet</h4>
+                <p class="text-muted">Start by posting your first job opening.</p>
+                <a href="{{ url_for('post_job') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Post First Job
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
